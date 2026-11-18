@@ -46,7 +46,7 @@ const IconInput = ({ name, label, icon: Icon, type = 'text', ...props }) => {
           {...field}
           {...props}
           aria-invalid={Boolean(invalid)}
-          className={`w-full rounded-xl border bg-field py-3.5 pl-12 pr-12 text-[15px] text-ink placeholder:text-muted/70 focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-100 ${
+          className={`w-full rounded-xl border bg-field py-3.5 pl-12 pr-12 text-[0.9375rem] text-ink placeholder:text-muted/70 focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-100 ${
             invalid ? 'border-risk-high' : 'border-line'
           }`}
         />
@@ -69,8 +69,8 @@ const BrandPanel = ({ copy }) => (
       <Logo className="h-11 w-auto" />
     </div>
     <div className="relative mt-auto pt-16">
-      <h2 className="text-[32px] text-white font-bold leading-tight">{copy.panelTitle}</h2>
-      <p className="mt-3 max-w-xs text-[15px] leading-relaxed text-white/80">{copy.panelText}</p>
+      <h2 className="text-[2rem] text-white font-bold leading-tight">{copy.panelTitle}</h2>
+      <p className="mt-3 max-w-xs text-[0.9375rem] leading-relaxed text-white/80">{copy.panelText}</p>
     </div>
     <div className="relative mt-auto flex items-start gap-3 rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur">
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-500">
@@ -131,8 +131,8 @@ const LoginPage = ({ portal }) => {
           </div>
 
           <div className="my-auto w-full">
-            <h1 className="text-[34px] font-bold leading-tight text-navy sm:text-[38px]">{copy.title}</h1>
-            <p className="mt-2 text-[15px] text-muted">{copy.subtitle}</p>
+            <h1 className="text-[2.125rem] font-bold leading-tight text-navy sm:text-[2.375rem]">{copy.title}</h1>
+            <p className="mt-2 text-[0.9375rem] text-muted">{copy.subtitle}</p>
 
             <Formik initialValues={{ email: params.get('email') || '', password: '' }} validationSchema={schema} onSubmit={onSubmit}>
               {({ isSubmitting }) => (

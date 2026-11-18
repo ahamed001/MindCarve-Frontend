@@ -50,7 +50,7 @@ const OptionPill = ({ option, selected, onClick, disabled }) => (
     aria-checked={selected}
     disabled={disabled}
     onClick={onClick}
-    className={`rounded-full border px-6 py-3 text-[15px] font-medium transition ${
+    className={`rounded-full border px-6 py-3 text-[0.9375rem] font-medium transition ${
       selected ? 'border-teal-600 bg-teal-600 text-white shadow-[0_6px_14px_rgba(13,148,136,0.3)]' : 'border-line bg-white text-ink hover:border-teal-300 hover:bg-teal-50/50'
     }`}
   >
@@ -81,7 +81,7 @@ const QuestionCard = ({ question, answer, onAnswer, disabled, saveStatus }) => {
         {question.number}
       </span>
       {question.helpText && <p className="mb-1 text-sm text-muted">{question.helpText}</p>}
-      <h3 className="text-[17px] font-medium leading-relaxed text-ink">{question.text}</h3>
+      <h3 className="text-[1.0625rem] font-medium leading-relaxed text-ink">{question.text}</h3>
       <div className="mx-auto my-5 h-px max-w-xl bg-line" />
       {question.type === 'text' ? (
         <textarea
@@ -190,7 +190,7 @@ const BlocksPanel = ({ blocks, answers }) => {
               <button type="button" onClick={() => setOpen(expanded ? -1 : i)} className="flex w-full items-center gap-4 px-5 py-4 text-left" aria-expanded={expanded}>
                 <span className="w-4 text-sm text-ink">{i + 1}</span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-[15px] font-medium text-ink">
+                  <span className="block text-[0.9375rem] font-medium text-ink">
                     Q {first} - {last}
                   </span>
                   <span className="block truncate text-xs text-muted">{b.title || `${b.questions.length} questions`}</span>
@@ -248,6 +248,22 @@ const QuizRunner = ({ session, upNext }) => {
   const answered = assessment.questions.filter((q) => isAnswered(q, answers[q.itemId])).length;
   const missing = assessment.questions.filter((q) => q.required && !isAnswered(q, answers[q.itemId]));
   const complete = missing.length === 0;
+
+  // When the last unanswered question gets answered (wherever the patient is on the page),
+  // glide down to "Submit answers". Only on that transition — not when reopening a finished quiz.
+  const submitRef = useRef(null);
+  const wasComplete = useRef(complete);
+  useEffect(() => {
+    if (complete && !wasComplete.current) {
+      const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      // Small delay so the patient sees their final selection register before the page moves.
+      const timer = setTimeout(() => submitRef.current?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' }), 350);
+      wasComplete.current = complete;
+      return () => clearTimeout(timer);
+    }
+    wasComplete.current = complete;
+    return undefined;
+  }, [complete]);
   const typeLabel = QUESTION_TYPE_LABELS[assessment.questions[0]?.type] || '';
 
   /** Saves one answer. Requests are chained so a fast double-click on the same question keeps its final value. */
@@ -339,7 +355,7 @@ const QuizRunner = ({ session, upNext }) => {
             await flush();
             navigate('/patient/quizzes');
           }}
-          className="inline-flex items-center gap-2 text-[15px] text-ink-soft hover:text-ink"
+          className="inline-flex items-center gap-2 text-[0.9375rem] text-ink-soft hover:text-ink"
         >
           <FiArrowLeft /> Back to Categories
         </button>
@@ -350,7 +366,7 @@ const QuizRunner = ({ session, upNext }) => {
       </header>
 
       <div className="grid lg:grid-cols-[340px_minmax(0,1fr)] xl:grid-cols-[380px_minmax(0,1fr)_360px]">
-        <aside className="border-b border-line bg-[#FAFAFA] p-6 lg:sticky lg:top-[61px] lg:h-[calc(100vh-61px)] lg:overflow-y-auto lg:border-b-0 lg:border-r">
+        <aside className="border-b border-line bg-[#FAFAFA] p-6 lg:sticky lg:top-[3.8125rem] lg:h-[calc(100vh-3.8125rem)] lg:overflow-y-auto lg:border-b-0 lg:border-r">
           <InfoPanel assessment={assessment} answered={answered} total={total} upNext={upNext} />
           <div className="mt-5">
             <SaveStatus />
@@ -364,7 +380,7 @@ const QuizRunner = ({ session, upNext }) => {
               <QuestionCard key={q.itemId} question={q} answer={answers[q.itemId]} onAnswer={onAnswer} disabled={submitting} saveStatus={saveStatus[q.itemId]} />
             ))}
 
-            <div className="flex flex-col items-center gap-2 pb-6 pt-2">
+            <div ref={submitRef} className="flex scroll-mb-24 flex-col items-center gap-2 pb-6 pt-2">
               <button
                 type="button"
                 onClick={submit}
@@ -378,7 +394,7 @@ const QuizRunner = ({ session, upNext }) => {
           </div>
         </main>
 
-        <aside className="hidden border-l border-line bg-white p-6 xl:sticky xl:top-[61px] xl:block xl:h-[calc(100vh-61px)] xl:overflow-y-auto">
+        <aside className="hidden border-l border-line bg-white p-6 xl:sticky xl:top-[3.8125rem] xl:block xl:h-[calc(100vh-3.8125rem)] xl:overflow-y-auto">
           <BlocksPanel blocks={blocks} answers={answers} />
         </aside>
       </div>

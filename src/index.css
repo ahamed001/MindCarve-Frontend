@@ -3,9 +3,17 @@
 @tailwind utilities;
 
 @layer base {
-  html { -webkit-font-smoothing: antialiased; }
+  /* One switch for the whole app's scale: 93.75% = 15px base (browser default is 16px).
+     All sizes are rem-based, so every page shrinks evenly. */
+  html { -webkit-font-smoothing: antialiased; font-size: 93.75%; }
   body { @apply bg-canvas text-ink font-sans; }
   h1, h2, h3 { @apply text-ink; }
+}
+
+@media print {
+  @page { margin: 14mm; }
+  body { background: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .print-avoid-break { break-inside: avoid; }
 }
 
 @layer components {

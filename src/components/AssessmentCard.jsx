@@ -10,7 +10,7 @@ const AssessmentCard = ({ assessment, onOpen }) => (
       </span>
       <div className="flex flex-wrap justify-end gap-1.5">
         {assessment.status !== 'published' && <StatusBadge status={assessment.status} />}
-        {assessment.category && <span className="rounded-md border border-brand-100 bg-brand-50 px-2 py-0.5 text-[11px] font-semibold text-brand-600">{assessment.category}</span>}
+        {assessment.category && <span className="rounded-md border border-brand-100 bg-brand-50 px-2 py-0.5 text-[0.6875rem] font-semibold text-brand-600">{assessment.category}</span>}
       </div>
     </div>
     <h3 className="mt-4 font-bold leading-snug text-ink">{assessment.name}</h3>
@@ -22,7 +22,6 @@ const AssessmentCard = ({ assessment, onOpen }) => (
           <FiAlertCircle /> Scoring awaiting config
         </Badge>
       )}
-      {assessment.discrepancies?.length > 0 && <Badge tone="red">{assessment.discrepancies.length} source issue(s)</Badge>}
     </div>
     <div className="mt-auto flex items-center justify-between border-t border-dashed border-line pt-4 text-sm">
       <span className="inline-flex items-center gap-1.5 text-ink-soft">

@@ -57,7 +57,7 @@ export const RiskBadge = ({ level }) => {
 
 export const DemoTag = ({ show }) =>
   show ? (
-    <span title="Fictional demonstration record" className="rounded border border-dashed border-brand-200 px-1.5 py-px text-[10px] font-semibold uppercase tracking-wide text-brand-600">
+    <span title="Fictional demonstration record" className="rounded border border-dashed border-brand-200 px-1.5 py-px text-[0.625rem] font-semibold uppercase tracking-wide text-brand-600">
       Demo
     </span>
   ) : null;

@@ -14,6 +14,7 @@ import OverviewPage from '../pages/admin/overview/OverviewPage';
 import PatientsPage from '../pages/admin/patients/PatientsPage';
 import PatientDetailPage from '../pages/admin/patients/PatientDetailPage';
 import SubmissionPage from '../pages/admin/patients/SubmissionPage';
+import PrintReportPage from '../pages/admin/patients/PrintReportPage';
 import AssessmentLibraryPage from '../pages/admin/questions/AssessmentLibraryPage';
 import AssessmentBuilderPage from '../pages/admin/questions/AssessmentBuilderPage';
 import ReportsPage from '../pages/admin/reports/ReportsPage';
@@ -40,6 +41,8 @@ const AppRoutes = () => (
     <Route path="/reset-password" element={<ResetPasswordPage />} />
 
     <Route element={<ProtectedRoute roles={['admin', 'clinician']} loginPath="/admin/login" />}>
+      {/* Printable report opens in its own tab, outside the admin layout. */}
+      <Route path="/admin/print/:patientId" element={<PrintReportPage />} />
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Navigate to="overview" replace />} />
         <Route path="overview" element={<OverviewPage />} />

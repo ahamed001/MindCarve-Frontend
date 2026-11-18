@@ -4,15 +4,15 @@ const todayLabel = () =>
     .replace(/^(\w+) /, '$1, ');
 
 export const DatePill = () => (
-  <span className="inline-flex items-center rounded-full border border-line bg-white px-4 py-2 text-sm font-medium text-ink shadow-card">{todayLabel()}</span>
+  <span className="inline-flex items-center rounded-full border border-line bg-white px-3.5 py-1.5 text-xs font-medium text-ink shadow-card">{todayLabel()}</span>
 );
 
 export const PageHeader = ({ title, subtitle, actions, eyebrow, showDate = true }) => (
-  <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+  <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
     <div className="min-w-0">
       {eyebrow && <div className="mb-1.5">{eyebrow}</div>}
-      <h1 className="text-[28px] font-extrabold leading-tight tracking-tight text-ink sm:text-[32px]">{title}</h1>
-      {subtitle && <p className="mt-1.5 text-[15px] text-muted">{subtitle}</p>}
+      <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-ink">{title}</h1>
+      {subtitle && <p className="mt-1 text-sm text-muted">{subtitle}</p>}
     </div>
     <div className="flex flex-wrap items-center gap-2">
       {actions}
@@ -26,16 +26,16 @@ export const StatCard = ({ label, value, hint, hintHighlight, hintTone = 'brand'
   const tones = { brand: 'text-brand-600', red: 'text-risk-high', green: 'text-risk-low', muted: 'text-muted' };
   if (compact) {
     return (
-      <div className="px-6 py-5">
-        <p className="text-[26px] font-semibold leading-none text-ink">{value}</p>
-        <p className="mt-2 text-xs text-muted">{label}</p>
+      <div className="px-5 py-4">
+        <p className="text-xl font-semibold leading-none text-ink">{value}</p>
+        <p className="mt-1.5 text-[0.6875rem] text-muted">{label}</p>
       </div>
     );
   }
   return (
     <div className="p-6">
       <p className="text-sm font-medium text-ink-soft">{label}</p>
-      <p className="mt-2 text-[34px] font-bold leading-none tracking-tight text-ink">{value}</p>
+      <p className="mt-2 text-3xl font-bold leading-none tracking-tight text-ink">{value}</p>
       {(hint || hintHighlight) && (
         <p className="mt-3 text-sm text-muted">
           {hintHighlight && <span className={`font-semibold ${tones[hintTone]}`}>{hintHighlight}</span>} {hint}

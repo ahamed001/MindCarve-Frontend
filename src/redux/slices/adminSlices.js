@@ -17,16 +17,21 @@ const patientsSlice = createSlice({
     list: resourceState({ items: [], pagination: { page: 1, totalPages: 1, total: 0 } }),
     detail: resourceState(),
     submission: resourceState(),
+    report: resourceState(),
+    printReport: resourceState(),
   },
   reducers: {
     clearPatientDetail: (state) => {
       state.detail = resourceState();
+      state.report = resourceState();
     },
   },
   extraReducers: (b) => {
     addResourceCases(b, t.fetchPatients, 'list', stripMeta);
     addResourceCases(b, t.fetchPatientDetail, 'detail', stripMeta);
     addResourceCases(b, t.fetchSubmission, 'submission', stripMeta);
+    addResourceCases(b, t.fetchAttemptReport, 'report', stripMeta);
+    addResourceCases(b, t.fetchPatientReport, 'printReport', stripMeta);
     b.addCase(t.updatePatient.fulfilled, (state, action) => {
       state.detail.data = stripMeta(action.payload);
     })
@@ -53,40 +58,6 @@ const assessmentsSlice = createSlice({
     addResourceCases(b, t.fetchAssessments, 'list', (p) => p.items);
     addResourceCases(b, t.fetchAssessment, 'current', stripMeta);
     addResourceCases(b, t.fetchAssessmentSubmissions, 'submissions', (p) => p.items);
-    const setCurrent = (state, action) => {
-      state.current.data = stripMeta(action.payload);
-    };
-    [t.updateAssessment, t.publishAssessment, t.archiveAssessment, t.restoreAssessment].forEach((thunk) => b.addCase(thunk.fulfilled, setCurrent));
-    const markChanged = (state) => {
-      if (state.current.data) state.current.data.hasUnpublishedChanges = true;
-    };
-    b.addCase(t.addQuestion.fulfilled, (state, action) => {
-      state.current.data?.questions.push(stripMeta(action.payload));
-      markChanged(state);
-    })
-      .addCase(t.updateQuestion.fulfilled, (state, action) => {
-        const q = stripMeta(action.payload);
-        const list = state.current.data?.questions || [];
-        const i = list.findIndex((x) => x._id === q._id);
-        if (i >= 0) list[i] = q;
-        markChanged(state);
-      })
-      .addCase(t.deleteQuestion.fulfilled, (state, action) => {
-        if (state.current.data) state.current.data.questions = action.payload.items;
-        markChanged(state);
-      })
-      .addCase(t.reorderQuestions.fulfilled, (state, action) => {
-        if (state.current.data) state.current.data.questions = action.payload.items;
-        markChanged(state);
-      })
-      .addCase(t.createSection.fulfilled, (state, action) => {
-        if (state.current.data) state.current.data.sections = action.payload.sections;
-        markChanged(state);
-      })
-      .addCase(t.deleteSection.fulfilled, (state, action) => {
-        if (state.current.data) state.current.data.sections = action.payload.sections;
-        markChanged(state);
-      });
   },
 });
 
@@ -110,15 +81,20 @@ const reportsSlice = createSlice({
 // ---------------------------------------------------------------- Activity
 const activitySlice = createSlice({
   name: 'activity',
-  initialState: { feed: resourceState({ items: [], pagination: { page: 1, totalPages: 1 } }) },
+  initialState: {
+    feed: resourceState({ items: [], pagination: { page: 1, totalPages: 1 } }),
+    audit: resourceState({ items: [], pagination: { page: 1, totalPages: 1, total: 0 }, actions: [] }),
+  },
   reducers: {},
-  extraReducers: (b) =>
+  extraReducers: (b) => {
+    addResourceCases(b, t.fetchAudit, 'audit', stripMeta);
     addResourceCases(b, t.fetchActivity, 'feed', (payload, previous) => {
       const data = stripMeta(payload);
       // Page > 1 appends ("Load more"); page 1 replaces.
       if (data.pagination.page > 1 && previous) return { ...data, items: [...previous.items, ...data.items] };
       return data;
-    }),
+    });
+  },
 });
 
 export const { clearPatientDetail } = patientsSlice.actions;

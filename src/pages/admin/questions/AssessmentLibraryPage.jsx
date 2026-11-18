@@ -1,84 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Form, Formik } from 'formik';
-import * as Yup from 'yup';
-import { FiPlus } from 'react-icons/fi';
 import { PageHeader, StatCard, StatGroup } from '../../../components/Layout';
 import FilterChips from '../../../components/FilterChips';
 import { EmptyState, ErrorState, Loader } from '../../../components/Feedback';
 import { SearchBar } from '../../../components/Table';
-import { Modal } from '../../../components/Modal';
-import { FormInput, SelectInput, TextAreaInput } from '../../../components/FormFields';
 import AssessmentCard from '../../../components/AssessmentCard';
-import { createAssessment, fetchAssessments } from '../../../redux/thunks/adminThunks';
+import { fetchAssessments } from '../../../redux/thunks/adminThunks';
 import { useDebounce } from '../../../hooks/useDebounce';
-import { useToast } from '../../../hooks/useToast';
-import { QUESTION_TYPE_LABELS } from '../../../utils/format';
-
-const createSchema = Yup.object({
-  code: Yup.string().matches(/^[A-Za-z0-9-]{2,20}$/, '2–20 letters, numbers or dashes').required('Code is required'),
-  name: Yup.string().min(2).max(200).required('Name is required'),
-});
-
-const CreateAssessmentModal = ({ open, onClose }) => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const toast = useToast();
-  return (
-    <Modal open={open} onClose={onClose} title="New assessment" subtitle="Created as a draft. Add questions and scoring, then publish.">
-      <Formik
-        initialValues={{ code: '', category: '', name: '', description: '', instructions: '', respondent: 'Self', primaryQuestionType: 'single_choice' }}
-        validationSchema={createSchema}
-        onSubmit={async (values, { setSubmitting }) => {
-          try {
-            const created = await dispatch(createAssessment(values)).unwrap();
-            toast.success('Assessment created');
-            navigate(`/admin/questions/${created._id}`);
-          } catch (err) {
-            toast.error(err);
-            setSubmitting(false);
-          }
-        }}
-      >
-        {({ isSubmitting }) => (
-          <Form noValidate className="grid gap-4 sm:grid-cols-2">
-            <FormInput name="code" label="Code" placeholder="e.g. PHQ-9" required />
-            <FormInput name="category" label="Category" placeholder="e.g. Anxiety" />
-            <FormInput name="respondent" label="Respondent" />
-            <div className="sm:col-span-2">
-              <FormInput name="name" label="Name" required />
-            </div>
-            <div className="sm:col-span-2">
-              <TextAreaInput name="description" label="Description" rows={2} />
-            </div>
-            <div className="sm:col-span-2">
-              <TextAreaInput name="instructions" label="Instructions shown to the respondent" rows={3} />
-            </div>
-            <SelectInput name="primaryQuestionType" label="Main question type" options={Object.entries(QUESTION_TYPE_LABELS).map(([value, label]) => ({ value, label }))} />
-            <div className="col-span-full flex justify-end gap-2 border-t border-line pt-4">
-              <button type="button" className="btn-secondary" onClick={onClose}>
-                Cancel
-              </button>
-              <button type="submit" className="btn-primary" disabled={isSubmitting}>
-                {isSubmitting ? 'Creating…' : 'Create draft'}
-              </button>
-            </div>
-          </Form>
-        )}
-      </Formik>
-    </Modal>
-  );
-};
 
 const AssessmentLibraryPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const list = useSelector((s) => s.assessments.list);
-  const isAdmin = useSelector((s) => s.auth.user?.role === 'admin');
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
-  const [createOpen, setCreateOpen] = useState(false);
   const debounced = useDebounce(search);
 
   const load = () => dispatch(fetchAssessments({ ...(debounced && { search: debounced }), ...(status && { status }) }));
@@ -99,13 +35,6 @@ const AssessmentLibraryPage = () => {
       <PageHeader
         title="Questions & Answers"
         subtitle="How patients respond to each assessment question"
-        actions={
-          isAdmin && (
-            <button type="button" className="btn-primary" onClick={() => setCreateOpen(true)}>
-              <FiPlus /> New assessment
-            </button>
-          )
-        }
       />
       {stats && !debounced && !status && (
         <div className="mb-6">
@@ -138,7 +67,7 @@ const AssessmentLibraryPage = () => {
         <Loader />
       ) : !items.length ? (
         <div className="card">
-          <EmptyState title="No assessments found" message="Try a different search or create a new assessment." />
+          <EmptyState title="No assessments found" message="Try a different search." />
         </div>
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
@@ -147,7 +76,6 @@ const AssessmentLibraryPage = () => {
           ))}
         </div>
       )}
-      <CreateAssessmentModal open={createOpen} onClose={() => setCreateOpen(false)} />
     </>
   );
 };

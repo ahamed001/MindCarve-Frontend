@@ -36,20 +36,20 @@ const QuizCard = ({ quiz, onStart, starting }) => {
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-[#F7894A] text-white shadow-[0_6px_14px_rgba(232,87,31,0.3)]">
           <FiCheckSquare size={22} />
         </span>
-        {quiz.category && <span className="rounded-full border border-brand-100 bg-brand-50 px-3.5 py-1 text-[13px] font-medium text-brand-600">{quiz.category}</span>}
+        {quiz.category && <span className="rounded-full border border-brand-100 bg-brand-50 px-3.5 py-1 text-[0.8125rem] font-medium text-brand-600">{quiz.category}</span>}
       </div>
-      <h2 className="mt-6 text-[20px] font-bold leading-snug text-ink">{quiz.name}</h2>
-      <p className="mt-3 text-[15px] leading-relaxed text-muted">{quiz.description}</p>
+      <h2 className="mt-6 text-[1.25rem] font-bold leading-snug text-ink">{quiz.name}</h2>
+      <p className="mt-3 text-[0.9375rem] leading-relaxed text-muted">{quiz.description}</p>
       <div className="mt-auto flex w-full items-center justify-between border-t border-dashed border-line pt-5">
-        <span className="inline-flex items-center gap-2 text-[15px] text-ink-soft">
+        <span className="inline-flex items-center gap-2 text-[0.9375rem] text-ink-soft">
           <FiHelpCircle className="text-muted" /> {quiz.questionCount} questions
         </span>
         {clickable ? (
-          <span className="inline-flex items-center gap-2 text-[15px] font-semibold text-brand-600 transition-all duration-300 group-hover:gap-3">
+          <span className="inline-flex items-center gap-2 text-[0.9375rem] font-semibold text-brand-600 transition-all duration-300 group-hover:gap-3">
             {starting ? 'Opening…' : inProgress ? 'Continue' : 'Start'} <FiArrowRight />
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-emerald-600">
+          <span className="inline-flex items-center gap-1.5 text-[0.9375rem] font-semibold text-emerald-600">
             <FiCheckCircle /> Completed
           </span>
         )}
@@ -89,12 +89,12 @@ const QuizListPage = () => {
             <span className="inline-flex items-center gap-2 rounded-full bg-brand-100/80 px-4 py-1.5 text-sm font-medium uppercase tracking-wide text-brand-600">
               <span className="h-1.5 w-1.5 rounded-full bg-brand-500" /> Assessments
             </span>
-            <h1 className="mt-4 text-[44px] font-extrabold leading-tight tracking-tight text-ink sm:text-[52px]">
+            <h1 className="mt-4 text-[2.75rem] font-extrabold leading-tight tracking-tight text-ink sm:text-[3.25rem]">
               Take a <span className="text-brand-500">Quiz</span>
             </h1>
-            <p className="mt-3 text-[17px] text-muted">Choose an assessment below to begin. It only takes a few minutes.</p>
+            <p className="mt-3 text-[1.0625rem] text-muted">Choose an assessment below to begin. It only takes a few minutes.</p>
           </div>
-          <button type="button" onClick={() => dispatch(logout())} className="mt-2 inline-flex shrink-0 items-center gap-2 rounded-xl border border-line bg-white px-5 py-3 text-[15px] text-ink-soft hover:bg-field">
+          <button type="button" onClick={() => dispatch(logout())} className="mt-2 inline-flex shrink-0 items-center gap-2 rounded-xl border border-line bg-white px-5 py-3 text-[0.9375rem] text-ink-soft hover:bg-field">
             <FiLogOut /> Log out
           </button>
         </header>

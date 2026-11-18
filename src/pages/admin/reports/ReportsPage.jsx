@@ -82,7 +82,7 @@ const ReportsPage = () => {
                     disabled={!month || busyType === d.type}
                     className="flex items-center gap-3 rounded-2xl border border-line bg-white p-4 text-left transition hover:border-brand-200 hover:bg-brand-50 disabled:opacity-60"
                   >
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-100/70 text-[11px] font-bold text-brand-600">{d.format.toUpperCase()}</span>
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-100/70 text-[0.6875rem] font-bold text-brand-600">{d.format.toUpperCase()}</span>
                     <span className="min-w-0 flex-1">
                       <span className="block text-sm font-semibold text-ink">{d.title}</span>
                       <span className="block text-xs text-muted">{d.description}</span>

@@ -37,7 +37,7 @@ Start the backend first (`npm run dev` in `MindCarve-Backend`, port 4500). In de
 | `/admin/overview` | Staff | KPIs, assessments by day, risk levels, latest activity |
 | `/admin/patients`, `/admin/patients/:id` | Staff | Patient list (declaration filter) and patient detail |
 | `/admin/submissions/:assignmentId` | Staff | Submitted responses and calculated scores |
-| `/admin/questions`, `/admin/questions/:id` | Staff | Assessment library and quiz detail (Attempt ID lookup) |
+| `/admin/questions`, `/admin/questions/:id` | Staff | Assessment library and quiz detail |
 | `/admin/reports` | Admin | Generate and download PDF/XLSX reports |
 | `/admin/activity` | Staff | Activity timeline |
 

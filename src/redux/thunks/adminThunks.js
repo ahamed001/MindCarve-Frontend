@@ -10,6 +10,7 @@ export const fetchOverview = createApiThunk('dashboard/overview', () => NetworkS
 // Patients
 export const fetchPatients = createApiThunk('patients/list', (params) => NetworkService.get(S.patients.list, params));
 export const createPatient = createApiThunk('patients/create', (body) => NetworkService.post(S.patients.create, body));
+export const fetchPatientReport = createApiThunk('patients/report', (id) => NetworkService.get(S.patients.report(id)));
 export const fetchPatientDetail = createApiThunk('patients/detail', (id) => NetworkService.get(S.patients.detail(id)));
 export const updatePatient = createApiThunk('patients/update', ({ id, data }) => NetworkService.put(S.patients.update(id), data));
 export const setPatientStatus = createApiThunk('patients/status', ({ id, status }) => NetworkService.patch(S.patients.status(id), { status }));
@@ -22,7 +23,7 @@ export const cancelAssignment = createApiThunk('assignments/cancel', (id) => Net
 export const fetchAssessmentSubmissions = createApiThunk('assignments/byAssessment', (assessmentId) =>
   NetworkService.get(S.assignments.list, { assessment: assessmentId, status: 'completed', limit: 8 }),
 );
-export const lookupAttempt = createApiThunk('assignments/lookupAttempt', (code) => NetworkService.get(S.assignments.byAttempt(code)));
+export const fetchAttemptReport = createApiThunk('assignments/report', (id) => NetworkService.get(S.assignments.report(id)));
 export const fetchSubmission = createApiThunk('assignments/submission', (id) => NetworkService.get(S.assignments.submission(id)));
 export const updateReviewStatus = createApiThunk('results/review', ({ resultId, reviewStatus }) =>
   NetworkService.patch(S.results.review(resultId), { reviewStatus }),
@@ -31,17 +32,6 @@ export const updateReviewStatus = createApiThunk('results/review', ({ resultId, 
 // Assessments & questions
 export const fetchAssessments = createApiThunk('assessments/list', (params) => NetworkService.get(S.assessments.list, params));
 export const fetchAssessment = createApiThunk('assessments/detail', (id) => NetworkService.get(S.assessments.detail(id)));
-export const createAssessment = createApiThunk('assessments/create', (body) => NetworkService.post(S.assessments.create, body));
-export const updateAssessment = createApiThunk('assessments/update', ({ id, data }) => NetworkService.put(S.assessments.update(id), data));
-export const publishAssessment = createApiThunk('assessments/publish', (id) => NetworkService.post(S.assessments.publish(id)));
-export const archiveAssessment = createApiThunk('assessments/archive', (id) => NetworkService.post(S.assessments.archive(id)));
-export const restoreAssessment = createApiThunk('assessments/restore', (id) => NetworkService.post(S.assessments.restore(id)));
-export const addQuestion = createApiThunk('questions/add', ({ id, data }) => NetworkService.post(S.assessments.questions(id), data));
-export const updateQuestion = createApiThunk('questions/update', ({ questionId, data }) => NetworkService.put(S.assessments.question(questionId), data));
-export const deleteQuestion = createApiThunk('questions/delete', (questionId) => NetworkService.del(S.assessments.question(questionId)));
-export const reorderQuestions = createApiThunk('questions/reorder', ({ id, orderedIds }) => NetworkService.put(S.assessments.reorder(id), { orderedIds }));
-export const createSection = createApiThunk('sections/create', ({ id, data }) => NetworkService.post(S.assessments.sections(id), data));
-export const deleteSection = createApiThunk('sections/delete', ({ id, key }) => NetworkService.del(S.assessments.section(id, key)));
 
 // Reports
 export const fetchReports = createApiThunk('reports/list', () => NetworkService.get(S.reports.list));
@@ -61,4 +51,5 @@ export const downloadReport = createApiThunk('reports/download', async (id) => {
 });
 
 // Activity
+export const fetchAudit = createApiThunk('audit/list', (params) => NetworkService.get(S.audit.list, params));
 export const fetchActivity = createApiThunk('activity/list', (params) => NetworkService.get(S.activity.list, params));

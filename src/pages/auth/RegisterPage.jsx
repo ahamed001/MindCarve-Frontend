@@ -87,7 +87,7 @@ const INITIAL = {
 };
 
 const Divider = ({ children }) => (
-  <div className="col-span-full mt-1 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-wider text-muted">
+  <div className="col-span-full mt-1 flex items-center gap-3 text-[0.6875rem] font-semibold uppercase tracking-wider text-muted">
     {children}
     <span className="h-px flex-1 bg-line" />
   </div>
@@ -117,7 +117,7 @@ const Declaration = () => {
   const [field, meta] = useField({ name: 'declarationAccepted', type: 'checkbox' });
   return (
     <div className="col-span-full">
-      <label className={`flex cursor-pointer items-start gap-3 rounded-xl border bg-field p-4 text-[13px] leading-relaxed text-ink-soft ${meta.touched && meta.error ? 'border-risk-high' : 'border-line'}`}>
+      <label className={`flex cursor-pointer items-start gap-3 rounded-xl border bg-field p-4 text-[0.8125rem] leading-relaxed text-ink-soft ${meta.touched && meta.error ? 'border-risk-high' : 'border-line'}`}>
         <input type="checkbox" {...field} className="mt-0.5 h-4 w-4 shrink-0 accent-brand-500" />
         I confirm that the information provided above is true and accurate to the best of my knowledge, and I consent to Athma Mind Care Hospital using it for my care.
       </label>
@@ -180,7 +180,7 @@ const RegisterPage = () => {
           <Success result={result} />
         ) : (
           <>
-            <h1 className="text-[28px] font-extrabold tracking-tight text-navy">Let’s get you registered</h1>
+            <h1 className="text-[1.75rem] font-extrabold tracking-tight text-navy">Let’s get you registered</h1>
             <p className="mt-1 text-sm text-muted">Takes about a minute. We’ll email your login details once you’re done.</p>
             <Formik initialValues={INITIAL} validationSchema={schema} onSubmit={onSubmit}>
               {({ isSubmitting }) => (

@@ -9,7 +9,7 @@ const FilterChips = ({ value, onChange, options, label }) => (
           type="button"
           aria-pressed={active}
           onClick={() => onChange(o.value)}
-          className={`rounded-lg border px-3.5 py-2 text-xs font-semibold transition ${
+          className={`rounded-lg border px-3 py-1.5 text-[0.6875rem] font-semibold transition ${
             active ? 'border-brand-500 bg-brand-50 text-brand-600' : 'border-line bg-white text-ink hover:border-brand-200'
           }`}
         >

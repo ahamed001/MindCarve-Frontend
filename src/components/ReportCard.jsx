@@ -11,7 +11,7 @@ const ReportCard = ({ report, onDownload, onRetry, downloading }) => {
         {report.format.toUpperCase()}
       </span>
       <div className="min-w-0 flex-1">
-        <h3 className="truncate text-[16px] font-semibold text-ink">{report.title}</h3>
+        <h3 className="truncate text-[1rem] font-semibold text-ink">{report.title}</h3>
         <p className={`mt-0.5 text-sm ${report.status === 'failed' ? 'text-risk-high' : 'text-muted'}`}>
           {report.periodLabel}, {statusText}
         </p>

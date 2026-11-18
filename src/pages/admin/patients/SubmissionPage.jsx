@@ -153,7 +153,6 @@ const SubmissionPage = () => {
               eyebrow={
                 <div className="flex flex-wrap items-center gap-2 text-sm">
                   <span className="font-semibold text-brand-600">{assignment.patient.patientCode}</span>
-                  {assignment.attemptCode && <Badge tone="brand">Attempt {assignment.attemptCode}</Badge>}
                   <Badge tone="neutral">
                     {version.code} · version {version.version}
                   </Badge>
@@ -214,15 +213,6 @@ const SubmissionPage = () => {
               </div>
               <div className="order-1 space-y-6 xl:order-2">
                 {result ? <ResultPanel result={result} reviewing={reviewing} onReview={(s) => review(result._id, s)} /> : <Card title="Result">Not calculated.</Card>}
-                {version.discrepancies?.length > 0 && (
-                  <Card title="Source discrepancies (awaiting confirmation)">
-                    <ul className="list-disc space-y-2 pl-4 text-xs text-ink-soft">
-                      {version.discrepancies.map((d) => (
-                        <li key={d}>{d}</li>
-                      ))}
-                    </ul>
-                  </Card>
-                )}
               </div>
             </div>
           </>

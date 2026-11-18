@@ -21,15 +21,15 @@ const NavItems = ({ role, onNavigate }) => (
         to={to}
         onClick={onNavigate}
         className={({ isActive }) =>
-          `relative flex items-center gap-3.5 rounded-2xl px-4 py-3 text-[15px] font-medium transition ${
+          `relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
             isActive ? 'bg-brand-100/70 font-semibold text-brand-600' : 'text-ink hover:bg-brand-50'
           }`
         }
       >
         {({ isActive }) => (
           <>
-            {isActive && <span className="absolute -left-5 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-brand-500" aria-hidden="true" />}
-            <Icon size={19} className={isActive ? 'text-brand-500' : 'text-ink-soft'} />
+            {isActive && <span className="absolute -left-4 top-1/2 h-7 w-1 -translate-y-1/2 rounded-r-full bg-brand-500" aria-hidden="true" />}
+            <Icon size={17} className={isActive ? 'text-brand-500' : 'text-ink-soft'} />
             {label}
           </>
         )}
@@ -41,12 +41,12 @@ const NavItems = ({ role, onNavigate }) => (
 const ProfileFooter = ({ user }) => {
   const dispatch = useDispatch();
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-line bg-canvas/60 p-3">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 text-base font-bold text-white">
+    <div className="flex items-center gap-2.5 rounded-xl border border-line bg-canvas/60 p-2.5">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-600 text-sm font-bold text-white">
         {(user?.name || '?').charAt(0).toUpperCase()}
       </div>
       <div className="min-w-0 flex-1">
-        <div className="truncate text-[15px] font-semibold text-ink">{user?.name}</div>
+        <div className="truncate text-sm font-semibold text-ink">{user?.name}</div>
         <div className="truncate text-xs text-muted">{user?.email}</div>
       </div>
       <button type="button" onClick={() => dispatch(logout())} className="rounded-lg p-2 text-ink-soft hover:bg-white hover:text-ink" title="Sign out" aria-label="Sign out">
@@ -72,17 +72,17 @@ const AdminSidebar = () => {
       {open && <div className="fixed inset-0 z-40 bg-ink/30 lg:hidden" onClick={() => setOpen(false)} aria-hidden="true" />}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-line bg-white px-5 py-6 transition-transform lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-60 flex-col border-r border-line bg-white px-4 py-5 transition-transform lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="mb-8 flex items-center justify-between">
-          <Logo />
+        <div className="mb-6 flex items-center justify-between">
+          <Logo className="h-9 w-auto" />
           <button type="button" className="rounded-lg p-1.5 text-muted lg:hidden" onClick={() => setOpen(false)} aria-label="Close menu">
             <FiX size={18} />
           </button>
         </div>
-        <div className="mb-3 px-2 text-sm font-medium text-ink-soft">Menu</div>
+        <div className="mb-2 px-2 text-xs font-medium text-ink-soft">Menu</div>
         <NavItems role={user?.role} onNavigate={() => setOpen(false)} />
         <div className="mt-auto pt-6">
           <ProfileFooter user={user} />

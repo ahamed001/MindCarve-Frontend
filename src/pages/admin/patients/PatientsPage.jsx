@@ -5,7 +5,6 @@ import { FiChevronRight, FiUserPlus } from 'react-icons/fi';
 import { PageHeader, StatCard, StatGroup } from '../../../components/Layout';
 import { DataTable, FilterDropdown, Pagination, SearchBar } from '../../../components/Table';
 import FilterChips from '../../../components/FilterChips';
-import { DemoTag } from '../../../components/Badges';
 import PatientFormModal from './PatientFormModal';
 import InvitationResultModal from './InvitationResultModal';
 import { fetchPatients } from '../../../redux/thunks/adminThunks';
@@ -14,11 +13,11 @@ import { ageGender, formatDate, initials } from '../../../utils/format';
 
 const DeclarationPill = ({ signed }) =>
   signed ? (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-100/70 px-2.5 py-1 text-xs font-semibold text-brand-600">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-100/70 px-2 py-0.5 text-[0.6875rem] font-semibold text-brand-600">
       <span className="h-1.5 w-1.5 rounded-full bg-brand-500" /> Signed
     </span>
   ) : (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-500">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2 py-0.5 text-[0.6875rem] font-semibold text-slate-500">
       <span className="h-1.5 w-1.5 rounded-full bg-slate-400" /> Pending
     </span>
   );
@@ -52,14 +51,13 @@ const PatientsPage = () => {
       header: 'Patient',
       render: (p) => (
         <div className="flex items-center gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-100/70 text-xs font-bold text-brand-600">{initials(p.fullName)}</span>
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100/70 text-[0.6875rem] font-bold text-brand-600">{initials(p.fullName)}</span>
           <div className="min-w-0">
             <div className="flex items-center gap-2 font-medium text-ink">
               <span className="truncate">{p.fullName}</span>
-              <DemoTag show={p.isDemo} />
-              {p.status === 'inactive' && <span className="rounded bg-slate-100 px-1.5 text-[10px] font-semibold uppercase text-slate-500">Inactive</span>}
+              {p.status === 'inactive' && <span className="rounded bg-slate-100 px-1.5 text-[0.625rem] font-semibold uppercase text-slate-500">Inactive</span>}
             </div>
-            <div className="text-xs text-muted">
+            <div className="text-[0.6875rem] text-muted">
               {ageGender(p)} · {p.patientCode}
             </div>
           </div>
@@ -73,7 +71,7 @@ const PatientsPage = () => {
       render: (p) => (
         <div>
           <div className="text-ink">{p.phone || '—'}</div>
-          <div className="text-xs text-muted">{p.email}</div>
+          <div className="text-[0.6875rem] text-muted">{p.email}</div>
         </div>
       ),
     },
@@ -84,7 +82,7 @@ const PatientsPage = () => {
       render: (p) => (
         <div>
           <div className="text-ink">{p.city || '—'}</div>
-          <div className="text-xs text-muted">{p.state}</div>
+          <div className="text-[0.6875rem] text-muted">{p.state}</div>
         </div>
       ),
     },
@@ -97,10 +95,10 @@ const PatientsPage = () => {
         p.assignments.total ? (
           <span className="text-ink-soft">
             {p.assignments.completed}/{p.assignments.total} done
-            <span className="block max-w-[160px] truncate text-xs text-muted">{p.assignments.codes.join(', ')}</span>
+            <span className="block max-w-[160px] truncate text-[0.6875rem] text-muted">{p.assignments.codes.join(', ')}</span>
           </span>
         ) : (
-          <span className="text-xs text-muted">None assigned</span>
+          <span className="text-[0.6875rem] text-muted">None assigned</span>
         ),
     },
     { key: 'declaration', header: 'Declaration', render: (p) => <DeclarationPill signed={p.declaration?.accepted} /> },

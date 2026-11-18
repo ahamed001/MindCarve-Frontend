@@ -54,14 +54,20 @@ const ActivityTimeline = ({ items }) => (
           <span className="h-3 w-3 rounded-full" />
         </span>
         <div className="min-w-0 flex-1 pt-1">
-          <p className="text-[15px] text-ink-soft">
+          <p className="text-[0.9375rem] text-ink-soft">
             <ActivityMessage item={item} /> <DemoTag show={item.isDemo} />
           </p>
           <p className="mt-1 flex flex-wrap gap-x-2 text-sm text-muted">
             <time dateTime={item.createdAt}>{relativeTime(item.createdAt)}</time>
+            {item.actorName && (
+              <span>
+                · by {item.actorName}
+                {item.actorRole && item.actorRole !== 'patient' ? ` (${item.actorRole})` : ''}
+              </span>
+            )}
             {item.patient?._id && (
               <Link to={`/admin/patients/${item.patient._id}`} className="font-medium text-brand-600 hover:underline">
-                {item.patient.patientCode}
+                · {item.patient.fullName} · {item.patient.patientCode}
               </Link>
             )}
           </p>
@@ -82,7 +88,7 @@ export const ActivityList = ({ items }) => (
             {initials(subjectName(item)) || '•'}
           </span>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[15px] text-ink-soft">
+            <p className="truncate text-[0.9375rem] text-ink-soft">
               <ActivityMessage item={item} /> <DemoTag show={item.isDemo} />
             </p>
             <p className="text-sm text-muted">{relativeTime(item.createdAt)}</p>

@@ -22,27 +22,19 @@ export const NetworkString = {
     resendInvitation: (id) => `/patients/${id}/invitation/resend`,
     assignments: (id) => `/patients/${id}/assignments`,
     results: (id) => `/patients/${id}/results`,
+    report: (id) => `/patients/${id}/report`,
     notes: (id) => `/patients/${id}/notes`,
   },
   assessments: {
     list: '/assessments',
-    create: '/assessments',
     detail: (id) => `/assessments/${id}`,
-    update: (id) => `/assessments/${id}`,
-    publish: (id) => `/assessments/${id}/publish`,
-    archive: (id) => `/assessments/${id}/archive`,
-    restore: (id) => `/assessments/${id}/restore`,
     questions: (id) => `/assessments/${id}/questions`,
-    reorder: (id) => `/assessments/${id}/questions/reorder`,
-    question: (questionId) => `/assessments/questions/${questionId}`,
-    sections: (id) => `/assessments/${id}/sections`,
-    section: (id, key) => `/assessments/${id}/sections/${key}`,
   },
   assignments: {
     list: '/assignments',
     status: (id) => `/assignments/${id}/status`,
     submission: (id) => `/assignments/${id}/submission`,
-    byAttempt: (code) => `/assignments/attempt/${encodeURIComponent(code)}`,
+    report: (id) => `/assignments/${id}/report`,
   },
   results: {
     review: (id) => `/results/${id}/review`,
@@ -56,6 +48,9 @@ export const NetworkString = {
   },
   activity: {
     list: '/activity',
+  },
+  audit: {
+    list: '/audit',
   },
   portal: {
     quizzes: '/me/quizzes',

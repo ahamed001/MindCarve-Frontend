@@ -58,7 +58,7 @@ const QuestionCard = ({ question, answer, onAnswer, disabled, highlightMissing }
         </span>
         <div className="pt-1">
           {question.helpText && <p className="mb-0.5 text-sm text-muted">{question.helpText}</p>}
-          <h3 className="text-[17px] font-semibold leading-snug text-ink">{question.text}</h3>
+          <h3 className="text-[1.0625rem] font-semibold leading-snug text-ink">{question.text}</h3>
           {highlightMissing && !answered && question.required && <p className="mt-1 text-xs font-medium text-risk-high">Please answer this question</p>}
         </div>
       </div>
