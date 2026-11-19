@@ -1,9 +1,14 @@
+import { disconnectSocket } from '../../services/socket';
 import { NetworkService } from '../../services/networkService';
 import { NetworkString } from '../../services/networkString';
 import { createApiThunk } from './createApiThunk';
 
 export const login = createApiThunk('auth/login', (credentials) => NetworkService.post(NetworkString.auth.login, credentials));
-export const logout = createApiThunk('auth/logout', () => NetworkService.post(NetworkString.auth.logout));
+// Close this tab's live connection first, so only the user's OTHER tabs get the "signed out" notice.
+export const logout = createApiThunk('auth/logout', () => {
+  disconnectSocket();
+  return NetworkService.post(NetworkString.auth.logout);
+});
 export const fetchCurrentUser = createApiThunk('auth/me', () => NetworkService.get(NetworkString.auth.me));
 export const verifyInvitation = createApiThunk('auth/verifyInvitation', (token) => NetworkService.get(NetworkString.auth.verifyInvitation, { token }));
 export const acceptInvitation = createApiThunk('auth/acceptInvitation', (body) => NetworkService.post(NetworkString.auth.acceptInvitation, body));

@@ -11,6 +11,7 @@ import { useDebounce } from '../../../hooks/useDebounce';
 import { useToast } from '../../../hooks/useToast';
 import { FiPlus } from 'react-icons/fi';
 import AssessmentFormModal from './AssessmentFormModal';
+import { useLiveEvent } from '../../../hooks/useLiveEvent';
 
 const AssessmentLibraryPage = () => {
   const dispatch = useDispatch();
@@ -37,6 +38,8 @@ const AssessmentLibraryPage = () => {
   };
 
   const load = () => dispatch(fetchAssessments({ ...(debounced && { search: debounced }), ...(status && { status }) }));
+  // Live: another admin's changes (new draft, publish, archive) show up here.
+  useLiveEvent('activity:new', (a) => a.category === 'content' && load(), { delay: 800 });
   useEffect(() => {
     load();
   }, [debounced, status]); // eslint-disable-line react-hooks/exhaustive-deps

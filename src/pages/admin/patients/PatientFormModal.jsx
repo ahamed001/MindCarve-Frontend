@@ -66,8 +66,8 @@ const PatientFormModal = ({ open, patient, onClose, onCreated }) => {
     const payload = { ...values, age: Number(values.age), dateOfBirth: null };
     try {
       if (isEdit) {
-        await dispatch(updatePatient({ id: patient._id, data: payload })).unwrap();
-        toast.success('Patient updated');
+        const updated = await dispatch(updatePatient({ id: patient._id, data: payload })).unwrap();
+        toast.success(updated.emailChangedTo ? `Email changed. A new invitation was sent to ${updated.emailChangedTo}.` : 'Patient updated');
         onClose();
       } else {
         const result = await dispatch(createPatient(payload)).unwrap();
@@ -89,7 +89,7 @@ const PatientFormModal = ({ open, patient, onClose, onCreated }) => {
             <SectionTitle>Patient details</SectionTitle>
             <FormInput name="fullName" label="Full name" required />
             <FormInput name="age" type="number" label="Age" min={1} max={120} required />
-            <FormInput name="email" type="email" label="Email" required hint={isEdit ? 'Changing this updates the sign-in email' : undefined} />
+            <FormInput name="email" type="email" label="Email" required hint={isEdit ? 'Changing it sends a new invitation to the new email and stops the old email and password from working' : undefined} />
             <FormInput name="phone" type="tel" label="Phone number" required />
             <SelectInput name="gender" label="Gender" options={GENDERS} />
             <FormInput name="guardianName" label="Parent / guardian name" hint="For child assessments completed by a parent" />

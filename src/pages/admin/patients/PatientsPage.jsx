@@ -10,6 +10,7 @@ import InvitationResultModal from './InvitationResultModal';
 import { fetchPatients } from '../../../redux/thunks/adminThunks';
 import { useDebounce } from '../../../hooks/useDebounce';
 import { ageGender, formatDate, initials } from '../../../utils/format';
+import { useLiveEvent } from '../../../hooks/useLiveEvent';
 
 const DeclarationPill = ({ signed }) =>
   signed ? (
@@ -37,6 +38,8 @@ const PatientsPage = () => {
 
   const load = () =>
     dispatch(fetchPatients({ page, limit: 15, ...(debounced && { search: debounced }), ...(declaration && { declaration }), ...(completion && { completion }) }));
+  // Live: new registrations, profile changes and quiz progress update the list.
+  useLiveEvent('activity:new', (a) => (a.category === 'patient' || a.category === 'assessment') && load(), { delay: 800 });
 
   useEffect(() => {
     load();

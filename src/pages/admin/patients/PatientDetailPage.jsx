@@ -34,6 +34,7 @@ import { addClinicianNote, fetchAttemptReport, fetchPatientDetail, resendInvitat
 import { clearPatientDetail } from '../../../redux/slices/adminSlices';
 import { useToast } from '../../../hooks/useToast';
 import { formatDate, formatDateTime, GENDER_LABELS, initials } from '../../../utils/format';
+import { useLiveEvent } from '../../../hooks/useLiveEvent';
 
 // Every number on this page (scores, maxima, levels, counts, percentages, age) comes from the API.
 // The browser only formats and displays it.
@@ -454,6 +455,7 @@ const AssessmentsCard = ({ rows, completedCount, selectedKey, onSelect, onReport
                 <ProgressRing percent={progress?.percentAnswered ?? 0} />
                 <span className="min-w-0">
                   <span className="block text-sm font-medium leading-snug text-ink">{r.name}</span>
+                  {r.archived && <span className="mt-0.5 inline-block rounded bg-stone-100 px-1.5 py-0.5 text-[0.625rem] font-semibold uppercase text-muted">Archived</span>}
                   <span className="mt-0.5 block text-xs text-muted">
                     {progress ? `${progress.answeredCount} of ${progress.questionCount} answered` : STATE_TEXT.not_started}
                     {r.state !== 'completed' && progress && ` · ${STATE_TEXT[r.state].toLowerCase()}`}
@@ -484,6 +486,14 @@ const PatientDetailPage = () => {
   const [inviteResult, setInviteResult] = useState(null);
 
   const load = () => dispatch(fetchPatientDetail(id));
+  // Live: while staff look at this patient, answers appear as the patient clicks them.
+  const refreshLive = () => {
+    load();
+    if (attemptIdRef.current) dispatch(fetchAttemptReport(attemptIdRef.current));
+  };
+  const attemptIdRef = useRef(null);
+  useLiveEvent('quiz:progress', (p) => p.patient === id && refreshLive(), { delay: 600 });
+  useLiveEvent('activity:new', (a) => a.patient === id && refreshLive(), { delay: 600 });
   useEffect(() => {
     load();
     return () => dispatch(clearPatientDetail());
@@ -492,6 +502,7 @@ const PatientDetailPage = () => {
   const rows = detail.data?.assessments || [];
   const selectedRow = rows.find((r) => r.assessmentId === selectedKey);
   const attemptId = selectedRow?.attempt?._id || null;
+  attemptIdRef.current = attemptId;
 
   // Default selection: the first completed assessment, otherwise the first one in progress, otherwise the first card.
   useEffect(() => {

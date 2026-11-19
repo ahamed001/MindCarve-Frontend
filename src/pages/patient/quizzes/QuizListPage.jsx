@@ -6,6 +6,7 @@ import { EmptyState, ErrorState, Loader } from '../../../components/Feedback';
 import { fetchMyQuizzes, startQuiz } from '../../../redux/thunks/portalThunks';
 import { logout } from '../../../redux/thunks/authThunks';
 import { useToast } from '../../../hooks/useToast';
+import { useLiveEvent } from '../../../hooks/useLiveEvent';
 
 /**
  * The whole card is clickable (unless the quiz is completed). On hover/focus it lifts slightly and an
@@ -66,11 +67,14 @@ const QuizListPage = () => {
   const [starting, setStarting] = useState(null);
 
   const load = () => dispatch(fetchMyQuizzes());
+  // Live: a newly published quiz appears (or an archived one disappears) without a refresh.
+  useLiveEvent('quizzes:changed', () => load());
   useEffect(() => {
     load();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const open = async (quiz) => {
+    if (starting) return; // ignore a second click while the first one is opening a quiz
     setStarting(quiz.assessmentId);
     try {
       const { assignmentId } = await dispatch(startQuiz(quiz.assessmentId)).unwrap();

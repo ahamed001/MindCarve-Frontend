@@ -6,7 +6,11 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    proxy: { '/api': { target: process.env.VITE_API_PROXY || 'http://localhost:4500', changeOrigin: true } },
+    proxy: {
+      '/api': { target: process.env.VITE_API_PROXY || 'http://localhost:4500', changeOrigin: true },
+      // Live updates (Socket.IO) go to the same API server, over WebSocket.
+      '/socket.io': { target: process.env.VITE_API_PROXY || 'http://localhost:4500', changeOrigin: true, ws: true },
+    },
   },
   build: {
     rollupOptions: {

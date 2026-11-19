@@ -7,6 +7,7 @@ import ActivityTimeline from '../../../components/ActivityTimeline';
 import { fetchActivity } from '../../../redux/thunks/adminThunks';
 import FilterChips from '../../../components/FilterChips';
 import AuditLogPanel from './AuditLogPanel';
+import { useLiveEvent } from '../../../hooks/useLiveEvent';
 
 const CATEGORIES = [
   { value: '', label: 'All events' },
@@ -25,6 +26,8 @@ const ActivityPage = () => {
   const [view, setView] = useState('activity');
 
   const load = (page = 1) => dispatch(fetchActivity({ page, limit: 20, ...(category ? { category } : {}) }));
+  // Live: new entries appear at the top without refreshing the page.
+  useLiveEvent('activity:new', (a) => (!category || a.category === category) && load(1), { delay: 600 });
   useEffect(() => {
     load(1);
   }, [category]); // eslint-disable-line react-hooks/exhaustive-deps

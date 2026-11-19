@@ -328,7 +328,9 @@ const QuizRunner = ({ session, upNext }) => {
     if (!complete || submitting) return;
     setSubmitting(true);
     try {
-      if (!(await flush())) return;
+      // Wait for in-flight saves, but don't stop on an earlier failed save: Submit sends every answer again,
+      // so anything a click didn't manage to save is stored now (the server rejects anything invalid).
+      await flush();
       await dispatch(submitAssessment({ id: assignment._id, answers: Object.values(answersRef.current) })).unwrap();
       if (upNext) {
         const { assignmentId } = await dispatch(startQuiz(upNext.assessmentId)).unwrap();

@@ -6,6 +6,7 @@ import { PageHeader, StatCard, StatGroup, ChartCard, Card } from '../../../compo
 import { AsyncContent, EmptyState } from '../../../components/Feedback';
 import { ActivityList } from '../../../components/ActivityTimeline';
 import { fetchOverview } from '../../../redux/thunks/adminThunks';
+import { useLiveEvent } from '../../../hooks/useLiveEvent';
 
 const RISK_COLORS = { low: '#FDBA74', moderate: '#F97316', high: '#9A3412', unclassified: '#CBD5E1', awaiting_configuration: '#E2E8F0' };
 
@@ -79,6 +80,8 @@ const OverviewPage = () => {
   const dispatch = useDispatch();
   const overview = useSelector((s) => s.dashboard.overview);
   const load = () => dispatch(fetchOverview());
+  // Live: refresh the numbers when anything happens (new patient, quiz started/submitted, …).
+  useLiveEvent('activity:new', () => load(), { delay: 800 });
   useEffect(() => {
     load();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
