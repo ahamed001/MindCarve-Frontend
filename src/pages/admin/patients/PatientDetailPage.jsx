@@ -116,7 +116,11 @@ const InfoSection = ({ icon: Icon, title, rows }) => (
       {rows.map(([label, value]) => (
         <div key={label}>
           <p className="text-xs text-muted">{label}</p>
-          <p className="break-words text-sm text-ink">{dash(value)}</p>
+          {value === null || value === undefined || value === '' ? (
+            <p className="text-sm italic text-muted/80">Not filled</p>
+          ) : (
+            <p className="whitespace-pre-line break-words text-sm text-ink">{value}</p>
+          )}
         </div>
       ))}
     </div>
@@ -135,6 +139,8 @@ const ProfileCard = ({ patient }) => {
           ['Marital status', MARITAL[patient.maritalStatus]],
           ['Education', patient.education],
           ['Occupation', patient.occupation],
+          ['Parent / guardian', patient.guardianName],
+          ['Relevant information', patient.relevantInfo],
         ]}
       />
       <InfoSection icon={FiMapPin} title="Address" rows={[['Full address', fullAddress]]} />

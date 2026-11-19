@@ -32,6 +32,15 @@ export const updateReviewStatus = createApiThunk('results/review', ({ resultId, 
 // Assessments & questions
 export const fetchAssessments = createApiThunk('assessments/list', (params) => NetworkService.get(S.assessments.list, params));
 export const fetchAssessment = createApiThunk('assessments/detail', (id) => NetworkService.get(S.assessments.detail(id)));
+export const createAssessment = createApiThunk('assessments/create', (body) => NetworkService.post(S.assessments.create, body));
+export const updateAssessment = createApiThunk('assessments/update', ({ id, data }) => NetworkService.put(S.assessments.update(id), data));
+export const publishAssessment = createApiThunk('assessments/publish', (id) => NetworkService.post(S.assessments.publish(id)));
+export const archiveAssessment = createApiThunk('assessments/archive', (id) => NetworkService.post(S.assessments.archive(id)));
+export const restoreAssessment = createApiThunk('assessments/restore', (id) => NetworkService.post(S.assessments.restore(id)));
+export const addQuestion = createApiThunk('questions/add', ({ id, data }) => NetworkService.post(S.assessments.questions(id), data));
+export const updateQuestion = createApiThunk('questions/update', ({ questionId, data }) => NetworkService.put(S.assessments.question(questionId), data));
+export const deleteQuestion = createApiThunk('questions/delete', (questionId) => NetworkService.del(S.assessments.question(questionId)));
+export const reorderQuestions = createApiThunk('questions/reorder', ({ id, orderedIds }) => NetworkService.put(S.assessments.reorder(id), { orderedIds }));
 
 // Reports
 export const fetchReports = createApiThunk('reports/list', () => NetworkService.get(S.reports.list));

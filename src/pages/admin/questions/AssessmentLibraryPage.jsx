@@ -6,8 +6,11 @@ import FilterChips from '../../../components/FilterChips';
 import { EmptyState, ErrorState, Loader } from '../../../components/Feedback';
 import { SearchBar } from '../../../components/Table';
 import AssessmentCard from '../../../components/AssessmentCard';
-import { fetchAssessments } from '../../../redux/thunks/adminThunks';
+import { createAssessment, fetchAssessments } from '../../../redux/thunks/adminThunks';
 import { useDebounce } from '../../../hooks/useDebounce';
+import { useToast } from '../../../hooks/useToast';
+import { FiPlus } from 'react-icons/fi';
+import AssessmentFormModal from './AssessmentFormModal';
 
 const AssessmentLibraryPage = () => {
   const dispatch = useDispatch();
@@ -16,6 +19,22 @@ const AssessmentLibraryPage = () => {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('');
   const debounced = useDebounce(search);
+  const isAdmin = useSelector((s) => s.auth.user?.role === 'admin');
+  const toast = useToast();
+  const [creating, setCreating] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const create = async (values) => {
+    setSaving(true);
+    try {
+      const a = await dispatch(createAssessment(values)).unwrap();
+      toast.success('Draft created. Add questions, then publish.');
+      navigate(`/admin/questions/${a._id}`);
+    } catch (err) {
+      toast.error(err);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const load = () => dispatch(fetchAssessments({ ...(debounced && { search: debounced }), ...(status && { status }) }));
   useEffect(() => {
@@ -35,7 +54,15 @@ const AssessmentLibraryPage = () => {
       <PageHeader
         title="Questions & Answers"
         subtitle="How patients respond to each assessment question"
+        actions={
+          isAdmin && (
+            <button type="button" className="btn-primary px-3 py-2 text-xs" onClick={() => setCreating(true)}>
+              <FiPlus /> New assessment
+            </button>
+          )
+        }
       />
+      <AssessmentFormModal open={creating} saving={saving} onSubmit={create} onClose={() => setCreating(false)} />
       {stats && !debounced && !status && (
         <div className="mb-6">
           <StatGroup>
@@ -54,7 +81,8 @@ const AssessmentLibraryPage = () => {
           options={[
             { value: '', label: 'All' },
             { value: 'published', label: 'Active' },
-            { value: 'inactive', label: 'Inactive' },
+            { value: 'draft', label: 'Drafts' },
+            { value: 'archived', label: 'Archived' },
           ]}
         />
         <span className="text-xs text-muted sm:ml-auto">{items.length} quizzes</span>

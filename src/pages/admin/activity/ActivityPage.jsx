@@ -51,7 +51,7 @@ const ActivityPage = () => {
       ) : (
       <section className="card p-6 sm:p-8">
         <div className="mb-6 flex justify-end">
-          <div className="w-full sm:w-56">
+          <div>
             <FilterDropdown label="Filter by category" value={category} onChange={setCategory} options={CATEGORIES} />
           </div>
         </div>

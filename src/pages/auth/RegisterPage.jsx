@@ -49,6 +49,10 @@ const schema = Yup.object({
   declarationAccepted: Yup.boolean().oneOf([true], 'Please accept the declaration to continue.'),
 });
 
+// Register stays disabled until every required field has something in it and the declaration is ticked.
+// Format problems (e.g. a 5-digit pincode) are still explained in the banner when Register is pressed.
+const allRequiredFilled = (v) => FIELD_ORDER.every((k) => (k === 'declarationAccepted' ? v[k] === true : String(v[k] ?? '').trim() !== ''));
+
 const FIELD_ORDER = ['fullName', 'age', 'phone', 'email', 'address', 'city', 'state', 'pincode', 'location', 'password', 'confirmPassword', 'declarationAccepted'];
 
 /** Banner shown after a submit attempt: first error message plus how many more remain (as in the reference). */
@@ -183,7 +187,7 @@ const RegisterPage = () => {
             <h1 className="text-[1.75rem] font-extrabold tracking-tight text-navy">Let’s get you registered</h1>
             <p className="mt-1 text-sm text-muted">Takes about a minute. We’ll email your login details once you’re done.</p>
             <Formik initialValues={INITIAL} validationSchema={schema} onSubmit={onSubmit}>
-              {({ isSubmitting }) => (
+              {({ isSubmitting, values }) => (
                 <Form noValidate className="mt-7 grid gap-x-4 gap-y-5 sm:grid-cols-12">
                   <ErrorSummary serverError={error} />
                   <div className="sm:col-span-4"><FormInput name="fullName" label="Full name" placeholder="Full Name" required /></div>
@@ -210,7 +214,7 @@ const RegisterPage = () => {
                   <Declaration />
 
                   <div className="col-span-full mt-2 flex flex-col items-center gap-4">
-                    <button type="submit" className="btn w-full max-w-[270px] bg-gradient-to-r from-brand-500 to-brand-600 py-3.5 text-white shadow-[0_8px_20px_rgba(232,87,31,0.3)] hover:opacity-95" disabled={isSubmitting}>
+                    <button type="submit" className="btn w-full max-w-[270px] bg-gradient-to-r from-brand-500 to-brand-600 py-3.5 text-white shadow-[0_8px_20px_rgba(232,87,31,0.3)] hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none" disabled={isSubmitting || !allRequiredFilled(values)}>
                       {isSubmitting ? 'Registering…' : 'Register'} <FiArrowRight />
                     </button>
                     <p className="text-sm text-muted">

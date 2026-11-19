@@ -27,8 +27,15 @@ export const NetworkString = {
   },
   assessments: {
     list: '/assessments',
+    create: '/assessments',
     detail: (id) => `/assessments/${id}`,
+    update: (id) => `/assessments/${id}`,
+    publish: (id) => `/assessments/${id}/publish`,
+    archive: (id) => `/assessments/${id}/archive`,
+    restore: (id) => `/assessments/${id}/restore`,
     questions: (id) => `/assessments/${id}/questions`,
+    reorder: (id) => `/assessments/${id}/questions/reorder`,
+    question: (questionId) => `/assessments/questions/${questionId}`,
   },
   assignments: {
     list: '/assignments',

@@ -1,12 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { FiCheck, FiChevronLeft } from 'react-icons/fi';
+import { FiArchive, FiArrowDown, FiArrowUp, FiCheck, FiChevronLeft, FiEdit2, FiPlus, FiRotateCcw, FiTrash2, FiUploadCloud } from 'react-icons/fi';
 import { DatePill } from '../../../components/Layout';
 import { AsyncContent, EmptyState } from '../../../components/Feedback';
 import { Badge, StatusBadge } from '../../../components/Badges';
+import { ConfirmationDialog } from '../../../components/Modal';
 import { SearchBar } from '../../../components/Table';
+import QuestionEditorModal from './QuestionEditorModal';
+import AssessmentFormModal from './AssessmentFormModal';
 import * as t from '../../../redux/thunks/adminThunks';
+import { useToast } from '../../../hooks/useToast';
 import { formatDate } from '../../../utils/format';
 
 const TYPE_TAG = {
@@ -86,7 +90,7 @@ const AboutPanel = ({ assessment }) => {
   );
 };
 
-const QuestionsTab = ({ assessment }) => {
+const QuestionsTab = ({ assessment, editable, onEdit, onDelete, onMove }) => {
   const [query, setQuery] = useState('');
   const subscalesFor = (itemId) => assessment.scoring.subscales.filter((s) => s.itemIds.includes(itemId)).map((s) => s.name);
   const sectionName = (key) => assessment.sections.find((s) => s.key === key)?.name;
@@ -156,6 +160,22 @@ const QuestionsTab = ({ assessment }) => {
                           </div>
                         )}
                       </div>
+                      {editable && (
+                        <div className="flex shrink-0 items-start gap-0.5 opacity-100 transition lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100">
+                          <button type="button" className="rounded-lg p-1.5 text-muted hover:bg-canvas hover:text-ink disabled:opacity-30" disabled={i === 0 || Boolean(query)} onClick={() => onMove(i, -1)} aria-label="Move up">
+                            <FiArrowUp />
+                          </button>
+                          <button type="button" className="rounded-lg p-1.5 text-muted hover:bg-canvas hover:text-ink disabled:opacity-30" disabled={i === assessment.questions.length - 1 || Boolean(query)} onClick={() => onMove(i, 1)} aria-label="Move down">
+                            <FiArrowDown />
+                          </button>
+                          <button type="button" className="rounded-lg p-1.5 text-muted hover:bg-canvas hover:text-ink" onClick={() => onEdit(q)} aria-label="Edit question">
+                            <FiEdit2 />
+                          </button>
+                          <button type="button" className="rounded-lg p-1.5 text-muted hover:bg-red-50 hover:text-risk-high" onClick={() => onDelete(q, subs)} aria-label="Delete question">
+                            <FiTrash2 />
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </li>
                 );
@@ -172,12 +192,32 @@ const AssessmentBuilderPage = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const current = useSelector((s) => s.assessments.current);
+  const isAdmin = useSelector((s) => s.auth.user?.role === 'admin');
+  const toast = useToast();
+  const [editor, setEditor] = useState({ open: false, question: null });
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [confirm, setConfirm] = useState(null);
+  const [saving, setSaving] = useState(false);
 
   const load = () => dispatch(t.fetchAssessment(id));
   useEffect(() => {
     load();
   }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  /** Runs a thunk with a busy flag and a toast; returns true on success. */
+  const run = async (action, successMessage) => {
+    setSaving(true);
+    try {
+      const res = await dispatch(action).unwrap();
+      toast.success(successMessage || res?.__message || 'Saved');
+      return true;
+    } catch (err) {
+      toast.error(err);
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <>
@@ -195,6 +235,23 @@ const AssessmentBuilderPage = () => {
       <AsyncContent resource={current} onRetry={load}>
         {(a) => {
           if (a._id !== id) return null;
+          const archived = a.status === 'archived';
+          const editable = isAdmin && !archived;
+          const canPublish = !archived && a.questions.length > 0 && (a.hasUnpublishedChanges || !a.currentVersion);
+          const nextVersion = (a.currentVersion || 0) + 1;
+
+          const move = (index, dir) => {
+            const ids = a.questions.map((q) => q._id);
+            [ids[index], ids[index + dir]] = [ids[index + dir], ids[index]];
+            run(t.reorderQuestions({ id: a._id, orderedIds: ids }), 'Order saved');
+          };
+          const saveQuestion = async (data) => {
+            const ok = editor.question
+              ? await run(t.updateQuestion({ questionId: editor.question._id, data }), 'Question saved')
+              : await run(t.addQuestion({ id: a._id, data }), 'Question added');
+            if (ok) setEditor({ open: false, question: null });
+          };
+
           return (
             <>
               <section className="card mb-5 flex flex-col gap-4 p-5 sm:flex-row sm:items-start sm:justify-between">
@@ -203,21 +260,121 @@ const AssessmentBuilderPage = () => {
                     {a.category && <span className="rounded-md border border-brand-100 bg-brand-50 px-2 py-0.5 text-[0.6875rem] font-semibold text-brand-600">{a.category}</span>}
                     <span className="rounded-md bg-stone-100 px-2 py-0.5 text-[0.6875rem] font-bold text-ink-soft">{a.code}</span>
                     {a.status !== 'published' && <StatusBadge status={a.status} />}
+                    {a.currentVersion > 0 && a.hasUnpublishedChanges && !archived && <Badge tone="amber">Unpublished changes</Badge>}
                     {a.scoring.status === 'awaiting_configuration' && <Badge tone="slate">Scoring awaiting configuration</Badge>}
                   </div>
                   <h2 className="mt-2 text-xl font-semibold text-ink">{a.name}</h2>
                   <p className="mt-0.5 text-xs text-muted">
                     {a.questions.length} questions, added {formatDate(a.createdAt)}
-                    {a.currentVersion > 0 && ` · published v${a.currentVersion}`}
+                    {a.currentVersion > 0 ? ` · live version v${a.currentVersion}` : ' · not published yet'}
                   </p>
                 </div>
+                {isAdmin && (
+                  <div className="flex flex-wrap gap-2">
+                    {archived ? (
+                      <button type="button" className="btn-secondary px-3 py-2 text-xs" disabled={saving} onClick={() => run(t.restoreAssessment(a._id), 'Assessment restored')}>
+                        <FiRotateCcw /> Restore
+                      </button>
+                    ) : (
+                      <>
+                        <button type="button" className="btn-ghost px-3 py-2 text-xs" onClick={() => setDetailsOpen(true)}>
+                          <FiEdit2 /> Edit details
+                        </button>
+                        <button
+                          type="button"
+                          className="btn-ghost px-3 py-2 text-xs"
+                          onClick={() =>
+                            setConfirm({
+                              title: 'Archive this assessment?',
+                              message: 'Patients will no longer see it on their Take a Quiz screen. Existing attempts and results are kept, and you can restore it any time.',
+                              label: 'Archive',
+                              danger: true,
+                              action: () => run(t.archiveAssessment(a._id), 'Assessment archived'),
+                            })
+                          }
+                        >
+                          <FiArchive /> Archive
+                        </button>
+                        <button type="button" className="btn-secondary px-3 py-2 text-xs" onClick={() => setEditor({ open: true, question: null })}>
+                          <FiPlus /> Add question
+                        </button>
+                        <button
+                          type="button"
+                          className="btn-primary px-3 py-2 text-xs"
+                          disabled={saving || !canPublish}
+                          title={!a.questions.length ? 'Add at least one question first' : !canPublish ? 'No changes to publish' : undefined}
+                          onClick={() =>
+                            setConfirm({
+                              title: `Publish version ${nextVersion}?`,
+                              message:
+                                nextVersion === 1
+                                  ? 'Patients will see this assessment on their Take a Quiz screen.'
+                                  : `New attempts will use version ${nextVersion}. Attempts already started or completed stay on the version they began with, so their answers and scores don’t change.`,
+                              label: `Publish v${nextVersion}`,
+                              action: () => run(t.publishAssessment(a._id), `Published as version ${nextVersion}`),
+                            })
+                          }
+                        >
+                          <FiUploadCloud /> Publish
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
               </section>
 
-              <QuestionsTab assessment={a} />
+              <QuestionsTab
+                assessment={a}
+                editable={editable}
+                onMove={move}
+                onEdit={(q) => setEditor({ open: true, question: q })}
+                onDelete={(q, subs) =>
+                  subs.length
+                    ? toast.error({ message: `This question is used by the scoring of ${subs.join(', ')}, so it can’t be deleted.` })
+                    : setConfirm({
+                        title: 'Delete this question?',
+                        message: `“${q.text}” will be removed from the draft. Patients keep seeing it until you publish, and past answers are not affected.`,
+                        label: 'Delete',
+                        danger: true,
+                        action: () => run(t.deleteQuestion(q._id), 'Question deleted'),
+                      })
+                }
+              />
+
+              <QuestionEditorModal
+                open={editor.open}
+                question={editor.question}
+                defaultType={a.primaryQuestionType}
+                saving={saving}
+                onSave={saveQuestion}
+                onClose={() => setEditor({ open: false, question: null })}
+              />
+              <AssessmentFormModal
+                open={detailsOpen}
+                assessment={a}
+                saving={saving}
+                onSubmit={async (values) => {
+                  if (await run(t.updateAssessment({ id: a._id, data: values }), 'Details saved')) setDetailsOpen(false);
+                }}
+                onClose={() => setDetailsOpen(false)}
+              />
             </>
           );
         }}
       </AsyncContent>
+      <ConfirmationDialog
+        open={Boolean(confirm)}
+        title={confirm?.title}
+        message={confirm?.message}
+        confirmLabel={confirm?.label}
+        tone={confirm?.danger ? 'danger' : 'primary'}
+        busy={saving}
+        onConfirm={async () => {
+          await confirm.action();
+          setConfirm(null);
+        }}
+        onCancel={() => setConfirm(null)}
+      />
     </>
   );
 };

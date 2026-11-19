@@ -141,7 +141,7 @@ const PatientsPage = () => {
             { value: 'pending', label: 'Declaration pending' },
           ]}
         />
-        <div className="lg:w-52">
+        <div>
           <FilterDropdown
             label="Assessment completion"
             value={completion}

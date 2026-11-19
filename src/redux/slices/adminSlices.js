@@ -58,6 +58,34 @@ const assessmentsSlice = createSlice({
     addResourceCases(b, t.fetchAssessments, 'list', (p) => p.items);
     addResourceCases(b, t.fetchAssessment, 'current', stripMeta);
     addResourceCases(b, t.fetchAssessmentSubmissions, 'submissions', (p) => p.items);
+    // Whole-assessment responses replace the current view.
+    const setCurrent = (state, action) => {
+      state.current.data = stripMeta(action.payload);
+    };
+    [t.updateAssessment, t.publishAssessment, t.archiveAssessment, t.restoreAssessment].forEach((thunk) => b.addCase(thunk.fulfilled, setCurrent));
+    // Question edits change the draft: update the list and show "Unpublished changes".
+    const markChanged = (state) => {
+      if (state.current.data) state.current.data.hasUnpublishedChanges = true;
+    };
+    b.addCase(t.addQuestion.fulfilled, (state, action) => {
+      state.current.data?.questions.push(stripMeta(action.payload));
+      markChanged(state);
+    })
+      .addCase(t.updateQuestion.fulfilled, (state, action) => {
+        const q = stripMeta(action.payload);
+        const list = state.current.data?.questions || [];
+        const i = list.findIndex((x) => x._id === q._id);
+        if (i >= 0) list[i] = q;
+        markChanged(state);
+      })
+      .addCase(t.deleteQuestion.fulfilled, (state, action) => {
+        if (state.current.data) state.current.data.questions = action.payload.items;
+        markChanged(state);
+      })
+      .addCase(t.reorderQuestions.fulfilled, (state, action) => {
+        if (state.current.data) state.current.data.questions = action.payload.items;
+        markChanged(state);
+      });
   },
 });
 

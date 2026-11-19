@@ -10,9 +10,15 @@ export const SearchBar = ({ value, onChange, placeholder = 'Search…', classNam
 );
 
 export const FilterDropdown = ({ label, value, onChange, options }) => (
-  <label className="block">
+  <label className="inline-block">
     <span className="sr-only">{label}</span>
-    <select value={value} onChange={(e) => onChange(e.target.value)} className="input pr-8" aria-label={label}>
+    {/* Same size as the filter chips next to it. */}
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      aria-label={label}
+      className={`cursor-pointer rounded-lg border bg-white py-1.5 pl-3 pr-7 text-[0.6875rem] font-semibold outline-none transition hover:border-brand-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 ${value ? 'border-brand-500 bg-brand-50 text-brand-600' : 'border-line text-ink'}`}
+    >
       {options.map((o) => (
         <option key={o.value} value={o.value}>
           {o.label}
