@@ -29,7 +29,7 @@ const QuizCard = ({ quiz, onStart, starting }) => {
       {clickable && (
         <span
           aria-hidden="true"
-          className="absolute left-0 top-0 h-[2px] w-0 bg-gradient-to-r from-brand-500 to-[#F7894A] transition-[width] duration-500 ease-out group-hover:w-full group-focus-visible:w-full"
+          className="absolute left-0 top-0 h-1 w-0 bg-gradient-to-r from-brand-500 to-[#F7894A] transition-[width] duration-500 ease-out group-hover:w-full group-focus-visible:w-full"
         />
       )}
       <div className="flex w-full items-start justify-between gap-3">

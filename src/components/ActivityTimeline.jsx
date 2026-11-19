@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { DemoTag } from './Badges';
 import { initials, relativeTime } from '../utils/format';
 
 // Visual language from the reference design: green = completed/registered, red = risk, blue = everything else.
@@ -55,7 +54,7 @@ const ActivityTimeline = ({ items }) => (
         </span>
         <div className="min-w-0 flex-1 pt-1">
           <p className="text-[0.9375rem] text-ink-soft">
-            <ActivityMessage item={item} /> <DemoTag show={item.isDemo} />
+            <ActivityMessage item={item} />
           </p>
           <p className="mt-1 flex flex-wrap gap-x-2 text-sm text-muted">
             <time dateTime={item.createdAt}>{relativeTime(item.createdAt)}</time>
@@ -89,7 +88,7 @@ export const ActivityList = ({ items }) => (
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-[0.9375rem] text-ink-soft">
-              <ActivityMessage item={item} /> <DemoTag show={item.isDemo} />
+              <ActivityMessage item={item} />
             </p>
             <p className="text-sm text-muted">{relativeTime(item.createdAt)}</p>
           </div>

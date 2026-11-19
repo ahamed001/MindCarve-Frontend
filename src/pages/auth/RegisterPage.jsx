@@ -33,18 +33,18 @@ const req = (field) => `The ${field} field is required.`;
 const schema = Yup.object({
   fullName: Yup.string().trim().min(2, 'The full name must be at least 2 characters.').max(120).required(req('full name')),
   age: Yup.number().typeError('The age must be a number.').integer('The age must be a whole number.').min(1, 'The age must be at least 1.').max(120, 'The age may not be greater than 120.').required(req('age')),
-  phone: Yup.string().required(req('phone')).matches(/^[+d][ds-]{6,18}$/, 'The phone must be a valid phone number.'),
+  phone: Yup.string().required(req('phone')).matches(/^[+\d][\d\s-]{6,18}$/, 'The phone must be a valid phone number.'),
   email: Yup.string().required(req('email')).email('The email must be a valid email address.'),
   address: Yup.string().trim().required(req('full address')).min(3, 'The full address is too short.'),
   city: Yup.string().trim().required(req('city')),
   state: Yup.string().required(req('state')).oneOf(INDIAN_STATES, 'Please choose a state from the list.'),
-  pincode: Yup.string().required(req('pincode')).matches(/^d{6}$/, 'The pincode must be 6 digits.'),
+  pincode: Yup.string().required(req('pincode')).matches(/^\d{6}$/, 'The pincode must be 6 digits.'),
   location: Yup.string().trim().required(req('location')),
   password: Yup.string()
     .required(req('password'))
     .min(8, 'The password must be at least 8 characters.')
     .matches(/[A-Za-z]/, 'The password must contain a letter.')
-    .matches(/d/, 'The password must contain a number.'),
+    .matches(/\d/, 'The password must contain a number.'),
   confirmPassword: Yup.string().required(req('confirm password')).oneOf([Yup.ref('password')], 'The password confirmation does not match.'),
   declarationAccepted: Yup.boolean().oneOf([true], 'Please accept the declaration to continue.'),
 });

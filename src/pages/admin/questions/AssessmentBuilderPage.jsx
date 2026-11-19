@@ -178,6 +178,7 @@ const AssessmentBuilderPage = () => {
     load();
   }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
+
   return (
     <>
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -211,7 +212,6 @@ const AssessmentBuilderPage = () => {
                   </p>
                 </div>
               </section>
-
 
               <QuestionsTab assessment={a} />
             </>
