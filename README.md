@@ -41,6 +41,8 @@ The app expects the backend at `http://localhost:4500` (Vite proxies `/api` and 
 
 ## Deploying (Vercel)
 
-- `vercel.json` sends every path to `index.html`, so links like `/admin/login` open directly.
-- Set `VITE_API_BASE_URL` in Vercel to your backend, e.g. `https://your-backend.onrender.com/api`, then redeploy. Socket.IO connects to the same backend.
+- `vercel.json` forwards `/api/*` to the backend (change the Render address there if yours differs) and sends every other path to `index.html`, so links like `/admin/login` open directly. Because the API is reached through this site, the login cookie works in every browser.
+- Vercel environment variables: `VITE_API_BASE_URL=/api` and `VITE_SOCKET_URL=https://your-backend.onrender.com` (live updates connect straight to the backend; Vercel can't forward WebSockets). Redeploy after changing them.
 - On the backend, add this site to `CLIENT_URL`.
+
+To run this frontend against the deployed backend, set `VITE_API_PROXY=https://your-backend.onrender.com` in `.env` and keep `VITE_API_BASE_URL=/api`.

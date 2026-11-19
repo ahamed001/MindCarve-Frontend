@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { GuestRoute, ProtectedRoute, homeFor } from './ProtectedRoute';
 import AdminLayout from '../layouts/AdminLayout';
@@ -23,10 +23,17 @@ import ActivityPage from '../pages/admin/activity/ActivityPage';
 import QuizListPage from '../pages/patient/quizzes/QuizListPage';
 import TakeAssessmentPage from '../pages/patient/assessments/TakeAssessmentPage';
 
+/**
+ * "/" and any unknown URL:
+ *  - signed in  → their home (admin/clinician: Overview dashboard, patient: Take a Quiz)
+ *  - signed out → the matching login page (anything under /admin → staff login, otherwise patient login)
+ */
 const RootRedirect = () => {
   const { user, status } = useSelector((s) => s.auth);
+  const { pathname } = useLocation();
   if (status === 'checking') return <Loader className="min-h-screen" />;
-  return <Navigate to={user ? homeFor(user) : '/login'} replace />;
+  if (user) return <Navigate to={homeFor(user)} replace />;
+  return <Navigate to={pathname.startsWith('/admin') ? '/admin/login' : '/login'} replace />;
 };
 
 const AppRoutes = () => (
@@ -37,7 +44,8 @@ const AppRoutes = () => (
     <Route path="/admin/login" element={<GuestRoute><LoginPage portal="staff" /></GuestRoute>} />
     <Route path="/register" element={<GuestRoute><RegisterPage /></GuestRoute>} />
     <Route path="/setup-account" element={<SetupAccountPage />} />
-    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+    <Route path="/forgot-password" element={<GuestRoute><ForgotPasswordPage /></GuestRoute>} />
+    {/* Opened from email links, so they stay reachable even while someone is signed in on this browser. */}
     <Route path="/reset-password" element={<ResetPasswordPage />} />
 
     <Route element={<ProtectedRoute roles={['admin', 'clinician']} loginPath="/admin/login" />}>

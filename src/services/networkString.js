@@ -5,6 +5,7 @@ export const NetworkString = {
     register: '/auth/register',
     logout: '/auth/logout',
     me: '/auth/me',
+    socketToken: '/auth/socket-token',
     verifyInvitation: '/auth/invitations/verify',
     acceptInvitation: '/auth/invitations/accept',
     forgotPassword: '/auth/password/forgot',
